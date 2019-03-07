@@ -16,7 +16,6 @@ public class StarGame extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("wallpaper.jpg");
-		region = new TextureRegion(img, 0, 0, 1080, 1920);
 	}
 
 	@Override
@@ -24,8 +23,7 @@ public class StarGame extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-//		batch.setColor(0, 0, 0, 0);
-		batch.draw(region, 0, 0);
+		batch.draw(img, 0, 0);
 		batch.end();
 	}
 	

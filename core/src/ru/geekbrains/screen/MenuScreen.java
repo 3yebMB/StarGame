@@ -29,16 +29,16 @@ public class MenuScreen extends Base2DScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
-        Gdx.gl.glClearColor(0.51f, 0.34f, 0.64f, 1);
+        Gdx.gl.glClearColor(0.15f, 0.43f, 0.46f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(img, pos.x, pos.y);
         batch.end();
         pos.add(v);
-        count--;
-        if (count <= 0) {
-            v.setZero();
-        }
+//        count--;
+//        if (count <= 0) {
+//            v.setZero();
+//        }
     }
 
     @Override

@@ -15,6 +15,7 @@ public class MenuScreen extends Base2DScreen {
     private Vector2 touch;
     private Vector2 pos;
     private Vector2 v;
+    private float scale;
 
     @Override
     public void show() {
@@ -53,11 +54,13 @@ public class MenuScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        scale = (float) (Math.random()*10);
         touch.set(screenX, Gdx.graphics.getHeight() - screenY);
         System.out.println("touch x = " + touch.x + " touch.y = " + touch.y);
 
         v = touch.cpy().sub(pos);
         v.nor();
+        v.scl(scale);
 
         return super.touchDown(screenX, screenY, pointer, button);
     }

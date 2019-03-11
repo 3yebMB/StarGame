@@ -15,7 +15,10 @@ public class MenuScreen extends Base2DScreen {
     private Vector2 touch;
     private Vector2 pos;
     private Vector2 v;
+    private Vector2 buf;
     private float scale;
+
+    private static float V_LEN = 6f;
 
     @Override
     public void show() {
@@ -26,6 +29,7 @@ public class MenuScreen extends Base2DScreen {
         touch = new Vector2();
         pos = new Vector2();
         v = new Vector2();
+        buf = new Vector2();
     }
 
     @Override
@@ -40,6 +44,11 @@ public class MenuScreen extends Base2DScreen {
 
         if ((0>pos.y) || (Gdx.graphics.getHeight()-ball.getHeight()<pos.y)) v.set(v.x, v.y*(-1));
         if ((0>pos.x) || (Gdx.graphics.getWidth()-ball.getWidth()<pos.x)) v.set(v.x*(-1), v.y);
+
+//        buf.set(touch);
+//        if (buf.sub(pos).len() <= V_LEN) pos.set(touch);
+//        else pos.add(v);
+
         pos.add(v);
 
     }
@@ -61,6 +70,8 @@ public class MenuScreen extends Base2DScreen {
         v = touch.cpy().sub(pos);
         v.nor();
         v.scl(scale);
+
+//        v.set(touch.cpy().sub(pos)).setLength(V_LEN);
 
         return super.touchDown(screenX, screenY, pointer, button);
     }

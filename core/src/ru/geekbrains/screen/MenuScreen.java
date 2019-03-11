@@ -37,6 +37,8 @@ public class MenuScreen extends Base2DScreen {
         batch.draw(ball, pos.x, pos.y);
         batch.end();
 
+        if ((0>pos.y) || (Gdx.graphics.getHeight()-ball.getHeight()<pos.y)) v.set(v.x, v.y*(-1));
+        if ((0>pos.x) || (Gdx.graphics.getWidth()-ball.getWidth()<pos.x)) v.set(v.x*(-1), v.y);
         pos.add(v);
 
     }

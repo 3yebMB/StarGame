@@ -15,7 +15,6 @@ public class MenuScreen extends Base2DScreen {
     private Vector2 touch;
     private Vector2 pos;
     private Vector2 v;
-    private int count = 300;
 
     @Override
     public void show() {
@@ -25,7 +24,7 @@ public class MenuScreen extends Base2DScreen {
         ball = new Texture("earth4.png");
         touch = new Vector2();
         pos = new Vector2();
-        v = new Vector2((float) Math.random(), (float) Math.random());
+        v = new Vector2();
     }
 
     @Override
@@ -40,16 +39,13 @@ public class MenuScreen extends Base2DScreen {
 
         pos.add(v);
 
-//        count--;
-//        if (count <= 0) {
-//            v.setZero();
-//        }
     }
 
     @Override
     public void dispose() {
         batch.dispose();
         img.dispose();
+        ball.dispose();
         super.dispose();
     }
 
@@ -57,6 +53,10 @@ public class MenuScreen extends Base2DScreen {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touch.set(screenX, Gdx.graphics.getHeight() - screenY);
         System.out.println("touch x = " + touch.x + " touch.y = " + touch.y);
+
+        v = touch.cpy().sub(pos);
+        v.nor();
+
         return super.touchDown(screenX, screenY, pointer, button);
     }
 }

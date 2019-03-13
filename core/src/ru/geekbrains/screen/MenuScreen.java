@@ -42,14 +42,14 @@ public class MenuScreen extends Base2DScreen {
         batch.draw(ball, pos.x, pos.y);
         batch.end();
 
-        if ((0>pos.y) || (Gdx.graphics.getHeight()-ball.getHeight()<pos.y)) v.set(v.x, v.y*(-1));
-        if ((0>pos.x) || (Gdx.graphics.getWidth()-ball.getWidth()<pos.x)) v.set(v.x*(-1), v.y);
+//        if ((0>pos.y) || (Gdx.graphics.getHeight()-ball.getHeight()<pos.y)) v.set(v.x, v.y*(-1));
+//        if ((0>pos.x) || (Gdx.graphics.getWidth()-ball.getWidth()<pos.x)) v.set(v.x*(-1), v.y);
 
-//        buf.set(touch);
-//        if (buf.sub(pos).len() <= V_LEN) pos.set(touch);
-//        else pos.add(v);
+        buf.set(touch);
+        if (buf.sub(pos).len() <= V_LEN) pos.set(touch);
+        else pos.add(v);
 
-        pos.add(v);
+//        pos.add(v);
 
     }
 
@@ -67,11 +67,11 @@ public class MenuScreen extends Base2DScreen {
         touch.set(screenX, Gdx.graphics.getHeight() - screenY);
         System.out.println("touch x = " + touch.x + " touch.y = " + touch.y);
 
-        v = touch.cpy().sub(pos);
-        v.nor();
-        v.scl(scale);
+//        v = touch.cpy().sub(pos);
+//        v.nor();
+//        v.scl(scale);
 
-//        v.set(touch.cpy().sub(pos)).setLength(V_LEN);
+        v.set(touch.cpy().sub(pos)).setLength(V_LEN);
 
         return super.touchDown(screenX, screenY, pointer, button);
     }

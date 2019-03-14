@@ -35,6 +35,7 @@ public class MenuScreen extends Base2DScreen {
         wallpaper.draw(batch);
         badLogic.draw(batch);
         batch.end();
+
         badLogic.update();
         wallpaper.update();
     }

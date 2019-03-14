@@ -7,17 +7,15 @@ import ru.geekbrains.base.Sprite;
 
 public class BadLogic extends Sprite {
 
-    private static float V_LEN = 0.006f;
+    private static float V_LEN = 0.25f;
 
-    private Vector2 pos;
     private Vector2 touch;
     private Vector2 v;
     private Vector2 buf;
 
     public BadLogic(TextureRegion region) {
         super(region);
-        setSize(0.5f, 0.5f);
-        this.pos = new Vector2();
+        setSize(50f, 50f);
         touch = new Vector2();
         v = new Vector2();
         buf = new Vector2();
@@ -25,11 +23,10 @@ public class BadLogic extends Sprite {
 
     public void update() {
         buf.set(touch);
-        if (buf.sub(pos).len() <= V_LEN) {
+        if (buf.sub(pos).len() <= V_LEN)
             pos.set(touch);
-        } else {
+        else
             pos.add(v);
-        }
     }
 
     public boolean touchDown(Vector2 touch, int pointer) {

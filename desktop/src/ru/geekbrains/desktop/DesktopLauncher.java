@@ -8,7 +8,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "StarTrack Game";
-		config.resizable = false;
+//		config.resizable = false;
 		new LwjglApplication(new Star2DGame(), config);
 	}
 }

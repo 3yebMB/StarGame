@@ -15,7 +15,7 @@ public class BadLogic extends Sprite {
 
     public BadLogic(TextureRegion region) {
         super(region);
-        setSize(50f, 50f);
+        setSize(13f, 13f);
         touch = new Vector2();
         v = new Vector2();
         buf = new Vector2();

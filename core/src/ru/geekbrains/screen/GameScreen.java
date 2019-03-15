@@ -1,10 +1,13 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import javax.swing.DebugGraphics;
 
 import ru.geekbrains.base.Base2DScreen;
 import ru.geekbrains.math.Rect;
@@ -15,6 +18,7 @@ public class GameScreen extends Base2DScreen {
     private Background background;
     private Texture backgroundTexture;
     private TextureAtlas atlas;
+    private Music music;
 
     @Override
     public void show() {
@@ -22,6 +26,8 @@ public class GameScreen extends Base2DScreen {
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/ground_sound.mp3"));
+
     }
 
     @Override
@@ -33,6 +39,7 @@ public class GameScreen extends Base2DScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
+        if (!music.isPlaying()) music.play();
         update(delta);
         draw();
     }
@@ -52,6 +59,7 @@ public class GameScreen extends Base2DScreen {
     @Override
     public void dispose() {
         backgroundTexture.dispose();
+        music.dispose();
         atlas.dispose();
         super.dispose();
     }

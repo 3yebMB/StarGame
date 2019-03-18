@@ -40,8 +40,6 @@ public class MenuScreen extends Base2DScreen {
     public void show() {
         super.show();
         sound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.mp3"));
-        //id = sound.play(1.0f);
-        //sound.setVolume(id, 0f);
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
         atlas = new TextureAtlas("textures/menuAtlas.tpack");

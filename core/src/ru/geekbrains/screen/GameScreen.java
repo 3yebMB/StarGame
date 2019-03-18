@@ -12,12 +12,15 @@ import javax.swing.DebugGraphics;
 import ru.geekbrains.base.Base2DScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
+import ru.geekbrains.sprite.Spacecraft;
 import ru.geekbrains.sprite.Star;
 
 public class GameScreen extends Base2DScreen {
 
     private static final int STAR_COUNT = 256;
     private Star starList[];
+
+    private Spacecraft spacecraft;
 
     private Background background;
     private Texture backgroundTexture;
@@ -29,14 +32,16 @@ public class GameScreen extends Base2DScreen {
         super.show();
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
-        atlas = new TextureAtlas("textures/mainAtlas.tpack");
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/ground_sound.mp3"));
+        atlas = new TextureAtlas("textures/mainAtlas.tpack");
 
-        atlas = new TextureAtlas("textures/menuAtlas.tpack");
         starList = new Star[STAR_COUNT];
         for (int i = 0; i < starList.length; i++) {
             starList[i] = new Star(atlas);
         }
+
+        spacecraft = new Spacecraft(atlas);
+
     }
 
     @Override
@@ -46,6 +51,8 @@ public class GameScreen extends Base2DScreen {
         for (Star star : starList) {
             star.resize(worldBounds);
         }
+
+        spacecraft.resize(worldBounds);
 
         background.resize(worldBounds);
     }
@@ -62,6 +69,8 @@ public class GameScreen extends Base2DScreen {
         for (Star star : starList) {
             star.update(delta);
         }
+
+        spacecraft.update(delta);
     }
 
     private void draw() {
@@ -73,6 +82,8 @@ public class GameScreen extends Base2DScreen {
         for (Star star : starList) {
             star.draw(batch);
         }
+
+        spacecraft.draw(batch);
 
         batch.end();
     }

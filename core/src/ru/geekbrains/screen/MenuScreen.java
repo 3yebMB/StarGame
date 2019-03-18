@@ -48,6 +48,7 @@ public class MenuScreen extends Base2DScreen {
             starList[i] = new Star(atlas);
         }
         buttonExit = new ButtonExit(atlas);
+        buttonExit.setHeightProportion(0.16f);
         buttonPlay = new ButtonPlay(atlas, game);
     }
 

@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+import javax.swing.plaf.synth.Region;
+
 import ru.geekbrains.base.Sprite;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.math.Rnd;
@@ -13,18 +15,13 @@ public class Spacecraft extends Sprite {
     private float spacecraftHeight;
 //    private Vector2 v;
     private Rect worldBounds;
-//    private TextureRegion regions[] = new TextureRegion[3];
+    private TextureRegion regions[] = new TextureRegion[3];
 
     public Spacecraft(TextureAtlas atlas) {
-        super(atlas.findRegion("main_ship")); // size : 390, 287
+        super(new TextureRegion(atlas.findRegion("main_ship"), 0, 0, 200, 300));
+//        super(atlas.findRegion("main_ship")); // size : 390, 287
 
-//        regions[0] = new TextureRegion(atlas.findRegion("main_ship"));
-//        int width = regions[0].getRegionWidth() / 2;
-//        spacecraftHeight = regions[0].getRegionHeight();
-//        regions[1] = new TextureRegion(regions[0], 916, 95, width, spacecraftHeight);
-//        regions[2] = new TextureRegion(regions[0], 916, 95, width, spacecraftHeight);
-
-        spacecraftHeight = Rnd.nextFloat(0.1f, 0.1f);
+        spacecraftHeight = 0.1f; //Rnd.nextFloat(0.1f, 0.1f);
     }
 
     @Override
@@ -34,10 +31,20 @@ public class Spacecraft extends Sprite {
     }
 
     @Override
+    public boolean touchDown(Vector2 touch, int pointer) {
+        return super.touchDown(touch, pointer);
+    }
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer) {
+        return super.touchUp(touch, pointer);
+    }
+
+    @Override
     public void resize(Rect worldBounds) {
         this.worldBounds = worldBounds;
         float posX = -0;
-        float posY = -0.44f;
+        float posY = -0.4f;
         pos.set(posX, posY);
     }
 }

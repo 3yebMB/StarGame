@@ -6,61 +6,56 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-import javax.swing.DebugGraphics;
+import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Base2DScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
-import ru.geekbrains.sprite.Spacecraft;
+import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.Star;
 
 public class GameScreen extends Base2DScreen {
 
-    private static final int STAR_COUNT = 256;
-    private Star starList[];
-
-    private Spacecraft spacecraft;
+    private static final int STAR_COUNT = 64;
 
     private Background background;
     private Texture backgroundTexture;
     private TextureAtlas atlas;
+
+    private Star starList[];
+    private MainShip mainShip;
+
     private Music music;
 
     @Override
     public void show() {
         super.show();
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        music.setLooping(true);
+        music.play();
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
-        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/ground_sound.mp3"));
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
-
         starList = new Star[STAR_COUNT];
         for (int i = 0; i < starList.length; i++) {
             starList[i] = new Star(atlas);
         }
-
-        spacecraft = new Spacecraft(atlas);
-
+        mainShip = new MainShip(atlas);
     }
 
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
-
+        background.resize(worldBounds);
         for (Star star : starList) {
             star.resize(worldBounds);
         }
-
-        spacecraft.resize(worldBounds);
-
-        background.resize(worldBounds);
+        mainShip.resize(worldBounds);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        if (!music.isPlaying()) music.play();
         update(delta);
         draw();
     }
@@ -69,8 +64,7 @@ public class GameScreen extends Base2DScreen {
         for (Star star : starList) {
             star.update(delta);
         }
-
-        spacecraft.update(delta);
+        mainShip.update(delta);
     }
 
     private void draw() {
@@ -78,21 +72,42 @@ public class GameScreen extends Base2DScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
-
         for (Star star : starList) {
             star.draw(batch);
         }
-
-        spacecraft.draw(batch);
-
+        mainShip.draw(batch);
         batch.end();
     }
 
     @Override
     public void dispose() {
         backgroundTexture.dispose();
-        music.dispose();
         atlas.dispose();
+        music.dispose();
         super.dispose();
+    }
+
+    @Override
+    public boolean touchDown(Vector2 touch, int pointer) {
+        mainShip.touchDown(touch, pointer);
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer) {
+        mainShip.touchUp(touch, pointer);
+        return false;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        mainShip.keyDown(keycode);
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        mainShip.keyUp(keycode);
+        return false;
     }
 }

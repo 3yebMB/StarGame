@@ -2,7 +2,7 @@ package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -29,8 +29,8 @@ public class MenuScreen extends Base2DScreen {
     private Star starList[];
     private ButtonExit buttonExit;
     private ButtonPlay buttonPlay;
-    private Sound sound;
-    private long id;
+
+    private Music music;
 
     public MenuScreen(Game game) {
         this.game = game;
@@ -39,7 +39,9 @@ public class MenuScreen extends Base2DScreen {
     @Override
     public void show() {
         super.show();
-        sound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        music.setLooping(true);
+        music.play();
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
@@ -48,7 +50,6 @@ public class MenuScreen extends Base2DScreen {
             starList[i] = new Star(atlas);
         }
         buttonExit = new ButtonExit(atlas);
-        buttonExit.setHeightProportion(0.16f);
         buttonPlay = new ButtonPlay(atlas, game);
     }
 
@@ -92,14 +93,13 @@ public class MenuScreen extends Base2DScreen {
     @Override
     public void dispose() {
         backgroundTexture.dispose();
-        sound.dispose();
         atlas.dispose();
+        music.dispose();
         super.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        sound.play(0.1f);
         buttonExit.touchDown(touch, pointer);
         buttonPlay.touchDown(touch, pointer);
         return false;

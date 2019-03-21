@@ -41,6 +41,7 @@ public class EnemyShip extends Sprite {
     public void resize(Rect worldBounds) {
 //        super.resize(worldBounds);
         this.worldBounds = worldBounds;
+        setTop(worldBounds.getTop() - 0.05f);
     }
 
     public void destroyd() {

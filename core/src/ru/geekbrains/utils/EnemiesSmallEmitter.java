@@ -30,6 +30,10 @@ public class EnemiesSmallEmitter {
 
     private EnemyPool enemyPool;
 
+    public EnemyPool getEnemyPool() {
+        return enemyPool;
+    }
+
     public EnemiesSmallEmitter(TextureAtlas atlas, Rect worldBounds, EnemyPool enemyPool) {
         this.worldBounds = worldBounds;
         this.enemyPool = enemyPool;

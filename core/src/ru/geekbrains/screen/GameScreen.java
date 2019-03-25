@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Base2DScreen;
@@ -93,6 +95,21 @@ public class GameScreen extends Base2DScreen {
         enemiesSmallEmitter.generate(delta);
         enemiesMediumEmitter.generate(delta);
         enemiesLargeEmitter.generate(delta);
+        if (bulletPool.getActiveObjects().size() != 0) {
+            Rectangle intersection = new Rectangle();
+            for (int k = 0; k < bulletPool.getActiveObjects().size(); k++) {
+//                enemiesSmallEmitter.getEnemyPool().getActiveObjects().get(k).
+                Rectangle r1 = enemiesSmallEmitter.getEnemyPool().getActiveObjects().get(k).getRect();
+                Rectangle r2 = bulletPool.getActiveObjects().get(k).getRect();
+                if (Intersector.intersectRectangles(r1, r2, intersection)) {
+                    if () {
+                        // удаляем пулю -
+                        // удаляем маленький корабль -
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private void deleteAllDestroyed() {

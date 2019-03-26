@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Base2DScreen;
@@ -16,7 +18,9 @@ import ru.geekbrains.pool.EnemyPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.Star;
-import ru.geekbrains.utils.EnemiesEmitter;
+import ru.geekbrains.utils.EnemiesLargeEmitter;
+import ru.geekbrains.utils.EnemiesMediumEmitter;
+import ru.geekbrains.utils.EnemiesSmallEmitter;
 
 public class GameScreen extends Base2DScreen {
 
@@ -32,7 +36,9 @@ public class GameScreen extends Base2DScreen {
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
 
-    private EnemiesEmitter enemiesEmitter;
+    private EnemiesSmallEmitter enemiesSmallEmitter;
+    private EnemiesMediumEmitter enemiesMediumEmitter;
+    private EnemiesLargeEmitter enemiesLargeEmitter;
 
     private Music music;
     private Sound laserSound;
@@ -56,7 +62,9 @@ public class GameScreen extends Base2DScreen {
         bulletPool = new BulletPool();
         enemyPool = new EnemyPool(bulletPool, worldBounds, bulletSound);
         mainShip = new MainShip(atlas, bulletPool, laserSound);
-        enemiesEmitter = new EnemiesEmitter(atlas, worldBounds, enemyPool);
+        enemiesSmallEmitter = new EnemiesSmallEmitter(atlas, worldBounds, enemyPool);
+        enemiesMediumEmitter = new EnemiesMediumEmitter(atlas, worldBounds, enemyPool);
+        enemiesLargeEmitter = new EnemiesLargeEmitter(atlas, worldBounds, enemyPool);
     }
 
     @Override
@@ -84,7 +92,24 @@ public class GameScreen extends Base2DScreen {
         mainShip.update(delta);
         bulletPool.updateActiveSprites(delta);
         enemyPool.updateActiveSprites(delta);
-        enemiesEmitter.generate(delta);
+        enemiesSmallEmitter.generate(delta);
+        enemiesMediumEmitter.generate(delta);
+        enemiesLargeEmitter.generate(delta);
+        if (bulletPool.getActiveObjects().size() != 0) {
+            Rectangle intersection = new Rectangle();
+            for (int k = 0; k < bulletPool.getActiveObjects().size(); k++) {
+//                enemiesSmallEmitter.getEnemyPool().getActiveObjects().get(k).
+                Rectangle r1 = enemiesSmallEmitter.getEnemyPool().getActiveObjects().get(k).getRect();
+                Rectangle r2 = bulletPool.getActiveObjects().get(k).getRect();
+                if (Intersector.intersectRectangles(r1, r2, intersection)) {
+                    if () {
+                        // удаляем пулю -
+                        // удаляем маленький корабль -
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private void deleteAllDestroyed() {

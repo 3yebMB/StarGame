@@ -1,10 +1,12 @@
 package ru.geekbrains.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +20,7 @@ import ru.geekbrains.pool.EnemyPool;
 import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.Bullet;
+import ru.geekbrains.sprite.ButtonNewGame;
 import ru.geekbrains.sprite.Enemy;
 import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.Star;
@@ -44,6 +47,8 @@ public class GameScreen extends Base2DScreen {
     private Sound laserSound;
     private Sound bulletSound;
     private Sound explosionSound;
+    private ButtonNewGame buttonNewGame;
+//    private Texture gameOver;
 
     @Override
     public void show() {
@@ -57,6 +62,7 @@ public class GameScreen extends Base2DScreen {
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+//        gameOver = new Texture((TextureData) atlas.findRegion("message_game_over"));
         starList = new Star[STAR_COUNT];
         for (int i = 0; i < starList.length; i++) {
             starList[i] = new Star(atlas);
@@ -66,6 +72,12 @@ public class GameScreen extends Base2DScreen {
         enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds, bulletSound);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
         enemiesEmitter = new EnemiesEmitter(atlas, worldBounds, enemyPool);
+        buttonNewGame = new ButtonNewGame(atlas, new Game() {
+            @Override
+            public void create() {
+
+            }
+        });
     }
 
     @Override
@@ -78,6 +90,7 @@ public class GameScreen extends Base2DScreen {
         if (!mainShip.isDestroyed()) {
             mainShip.resize(worldBounds);
         } else {
+            buttonNewGame.resize(worldBounds);
         }
     }
 
@@ -100,7 +113,10 @@ public class GameScreen extends Base2DScreen {
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
             enemiesEmitter.generate(delta);
+        } else {
+
         }
+
     }
 
     private void checkCollisions() {
@@ -173,7 +189,11 @@ public class GameScreen extends Base2DScreen {
             mainShip.draw(batch);
             enemyPool.drawActiveSprites(batch);
             bulletPool.drawActiveSprites(batch);
+        } else {
+            buttonNewGame.draw(batch);
+
         }
+
         batch.end();
     }
 
@@ -189,12 +209,15 @@ public class GameScreen extends Base2DScreen {
         bulletPool.dispose();
         enemyPool.dispose();
         super.dispose();
+
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
         if (!mainShip.isDestroyed()) {
             mainShip.touchDown(touch, pointer);
+        } else {
+            buttonNewGame.touchDown(touch, pointer);
         }
         return false;
     }
@@ -203,6 +226,8 @@ public class GameScreen extends Base2DScreen {
     public boolean touchUp(Vector2 touch, int pointer) {
         if (!mainShip.isDestroyed()) {
             mainShip.touchUp(touch, pointer);
+        } else {
+            buttonNewGame.touchUp(touch, pointer);
         }
         return false;
     }

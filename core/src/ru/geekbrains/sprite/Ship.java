@@ -82,4 +82,11 @@ public class Ship extends Sprite {
         return hp;
     }
 
+    public void setHp(float hp) {
+        if ((this.hp + hp/10) <= 10)
+            this.hp += hp/10;
+        else
+            this.hp = 10;
+    }
+
 }

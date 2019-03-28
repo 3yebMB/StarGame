@@ -80,4 +80,8 @@ public class Enemy extends Ship {
                 );
     }
 
+    public boolean willBeShipDestroyed(float dam) {
+        return (this.getHp() - dam <= 0);
+    }
+
 }

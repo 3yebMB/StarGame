@@ -30,7 +30,7 @@ public class MainShip extends Ship {
         this.bulletHeight = 0.01f;
         this.bulletV.set(0, 0.5f);
         this.damage = 1;
-        this.hp = 10;
+        this.hp = 10.0f;
         this.reloadInterval = 0.2f;
         this.shootSound = shootSound;
     }

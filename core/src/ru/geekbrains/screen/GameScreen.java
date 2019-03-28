@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -48,7 +47,6 @@ public class GameScreen extends Base2DScreen {
     private Sound bulletSound;
     private Sound explosionSound;
     private ButtonNewGame buttonNewGame;
-//    private Texture gameOver;
 
     @Override
     public void show() {
@@ -62,7 +60,6 @@ public class GameScreen extends Base2DScreen {
         backgroundTexture = new Texture("textures/bg.png");
         background = new Background(new TextureRegion(backgroundTexture));
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
-//        gameOver = new Texture((TextureData) atlas.findRegion("message_game_over"));
         starList = new Star[STAR_COUNT];
         for (int i = 0; i < starList.length; i++) {
             starList[i] = new Star(atlas);
@@ -75,7 +72,7 @@ public class GameScreen extends Base2DScreen {
         buttonNewGame = new ButtonNewGame(atlas, new Game() {
             @Override
             public void create() {
-
+                setScreen(new GameScreen());
             }
         });
     }
@@ -116,7 +113,6 @@ public class GameScreen extends Base2DScreen {
         } else {
 
         }
-
     }
 
     private void checkCollisions() {
@@ -191,9 +187,7 @@ public class GameScreen extends Base2DScreen {
             bulletPool.drawActiveSprites(batch);
         } else {
             buttonNewGame.draw(batch);
-
         }
-
         batch.end();
     }
 
@@ -209,7 +203,6 @@ public class GameScreen extends Base2DScreen {
         bulletPool.dispose();
         enemyPool.dispose();
         super.dispose();
-
     }
 
     @Override

@@ -8,24 +8,17 @@ import ru.geekbrains.screen.GameScreen;
 
 public class ButtonNewGame extends ScaledButton {
 
-    private Game game;
+    private GameScreen gameScreen;
 
-    public ButtonNewGame(TextureAtlas atlas, Game game) {
+    public ButtonNewGame(TextureAtlas atlas, GameScreen gameScreen) {
         super(atlas.findRegion("button_new_game"));
-        this.game = game;
-        setHeightProportion(0.1f);
-    }
-
-    @Override
-    public void resize(Rect worldBounds) {
-        setBottom(worldBounds.getHeight() / 4);
-//        setLeft(worldBounds.getLeft() + 0.2f);
+        setHeightProportion(0.05f);
+        setTop(-0.012f);
+        this.gameScreen = gameScreen;
     }
 
     @Override
     protected void action() {
-//        game.setScreen(new GameScreen());
-//        game.getScreen().show();
+        gameScreen.startNewGame();
     }
-
 }

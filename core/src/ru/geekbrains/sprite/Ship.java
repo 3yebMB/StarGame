@@ -21,7 +21,7 @@ public class Ship extends Sprite {
     protected ExplosionPool explosionPool;
     protected TextureRegion bulletRegion;
     protected int damage;
-    protected int hp;
+    protected float hp;
 
     protected Sound shootSound;
 
@@ -52,7 +52,7 @@ public class Ship extends Sprite {
         }
     }
 
-    public void damage(int damage) {
+    public void damage(float damage) {
         frame = 1;
         damageAnimateTimer = 0f;
         hp -= damage;
@@ -78,8 +78,15 @@ public class Ship extends Sprite {
         explosion.set(this.getHeight(), this.pos);
     }
 
-    public int getHp() {
+    public float getHp() {
         return hp;
+    }
+
+    public void setHp(float hp) {
+        if ((this.hp + hp/10) <= 10)
+            this.hp += hp/10;
+        else
+            this.hp = 10;
     }
 
 }

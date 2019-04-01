@@ -51,6 +51,7 @@ public class MenuScreen extends Base2DScreen {
         }
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
+
     }
 
     @Override
@@ -62,6 +63,7 @@ public class MenuScreen extends Base2DScreen {
         }
         buttonExit.resize(worldBounds);
         buttonPlay.resize(worldBounds);
+
     }
 
     @Override
@@ -87,6 +89,7 @@ public class MenuScreen extends Base2DScreen {
         }
         buttonExit.draw(batch);
         buttonPlay.draw(batch);
+
         batch.end();
     }
 
@@ -102,6 +105,7 @@ public class MenuScreen extends Base2DScreen {
     public boolean touchDown(Vector2 touch, int pointer) {
         buttonExit.touchDown(touch, pointer);
         buttonPlay.touchDown(touch, pointer);
+
         return false;
     }
 
@@ -109,6 +113,7 @@ public class MenuScreen extends Base2DScreen {
     public boolean touchUp(Vector2 touch, int pointer) {
         buttonExit.touchUp(touch, pointer);
         buttonPlay.touchUp(touch, pointer);
+
         return false;
     }
 }

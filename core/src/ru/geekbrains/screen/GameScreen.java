@@ -18,12 +18,16 @@ import ru.geekbrains.pool.EnemyPool;
 import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.Bullet;
+import ru.geekbrains.sprite.ButtonNewGame;
 import ru.geekbrains.sprite.Enemy;
 import ru.geekbrains.sprite.MainShip;
+import ru.geekbrains.sprite.MessageGameOver;
 import ru.geekbrains.sprite.Star;
 import ru.geekbrains.utils.EnemiesEmitter;
 
 public class GameScreen extends Base2DScreen {
+
+    private enum State {PLAYING, PAUSE, GAME_OVER}
 
     private static final int STAR_COUNT = 64;
 
@@ -44,6 +48,10 @@ public class GameScreen extends Base2DScreen {
     private Sound laserSound;
     private Sound bulletSound;
     private Sound explosionSound;
+
+    private MessageGameOver messageGameOver;
+    private ButtonNewGame buttonNewGame;
+    private State state;
 
     @Override
     public void show() {
@@ -66,6 +74,11 @@ public class GameScreen extends Base2DScreen {
         enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds, bulletSound);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
         enemiesEmitter = new EnemiesEmitter(atlas, worldBounds, enemyPool);
+
+        messageGameOver = new MessageGameOver(atlas);
+        buttonNewGame = new ButtonNewGame(atlas, this);
+
+        startNewGame();
     }
 
     @Override
@@ -75,7 +88,7 @@ public class GameScreen extends Base2DScreen {
         for (Star star : starList) {
             star.resize(worldBounds);
         }
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.resize(worldBounds);
         }
     }
@@ -94,7 +107,7 @@ public class GameScreen extends Base2DScreen {
             star.update(delta);
         }
         explosionPool.updateActiveSprites(delta);
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.update(delta);
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
@@ -103,7 +116,7 @@ public class GameScreen extends Base2DScreen {
     }
 
     private void checkCollisions() {
-        if (mainShip.isDestroyed()) {
+        if (state == State.GAME_OVER) {
             return;
         }
         List<Enemy> enemyList = enemyPool.getActiveObjects();
@@ -111,10 +124,16 @@ public class GameScreen extends Base2DScreen {
             if (enemy.isDestroyed()) {
                 continue;
             }
+
+            if (enemy.getBottom() <= mainShip.getBottom()+mainShip.getBottom()/10) {
+                mainShip.damage(enemy.getHp() / 10.0f);
+            }
+
             float minDist = enemy.getHalfWidth() + mainShip.getHalfWidth();
             if (enemy.pos.dst(mainShip.pos) < minDist) {
                 enemy.damage(enemy.getHp());
                 mainShip.damage(mainShip.getHp());
+                state = State.GAME_OVER;
                 return;
             }
         }
@@ -129,6 +148,8 @@ public class GameScreen extends Base2DScreen {
                     continue;
                 }
                 if (enemy.isBulletCollision(bullet)) {
+                    if (enemy.willBeShipDestroyed(bullet.getDamage()))
+                        mainShip.setHp(enemy.getHp());
                     enemy.damage(bullet.getDamage());
                     bullet.destroy();
                 }
@@ -142,6 +163,9 @@ public class GameScreen extends Base2DScreen {
             if (mainShip.isBulletCollision(bullet)) {
                 mainShip.damage(bullet.getDamage());
                 bullet.destroy();
+                if (mainShip.isDestroyed()) {
+                    state = State.GAME_OVER;
+                }
             }
         }
     }
@@ -161,10 +185,13 @@ public class GameScreen extends Base2DScreen {
             star.draw(batch);
         }
         explosionPool.drawActiveSprites(batch);
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.draw(batch);
             enemyPool.drawActiveSprites(batch);
             bulletPool.drawActiveSprites(batch);
+        } else if (state == State.GAME_OVER) {
+            messageGameOver.draw(batch);
+            buttonNewGame.draw(batch);
         }
         batch.end();
     }
@@ -185,23 +212,27 @@ public class GameScreen extends Base2DScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.touchDown(touch, pointer);
+        } else if (state == State.GAME_OVER) {
+            buttonNewGame.touchDown(touch, pointer);
         }
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.touchUp(touch, pointer);
+        } else if (state == State.GAME_OVER) {
+            buttonNewGame.touchUp(touch, pointer);
         }
         return false;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.keyDown(keycode);
         }
         return false;
@@ -209,9 +240,14 @@ public class GameScreen extends Base2DScreen {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (!mainShip.isDestroyed()) {
+        if (state == State.PLAYING) {
             mainShip.keyUp(keycode);
         }
         return false;
+    }
+
+    public void startNewGame() {
+        state = State.PLAYING;
+
     }
 }

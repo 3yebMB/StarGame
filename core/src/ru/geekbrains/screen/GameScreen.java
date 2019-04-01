@@ -183,6 +183,7 @@ public class GameScreen extends Base2DScreen {
                     enemy.damage(bullet.getDamage());
                     bullet.destroy();
                     if (enemy.isDestroyed()) {
+                        mainShip.setHp(enemy.getDamage()/2);
                         frags++;
                     }
                 }

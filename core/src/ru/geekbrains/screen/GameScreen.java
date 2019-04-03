@@ -3,10 +3,11 @@ package ru.geekbrains.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 
@@ -59,7 +60,7 @@ public class GameScreen extends Base2DScreen {
     private int frags;
 
     private State state;
-    private State stattBuf;
+    private State stateBuf;
 
     private MessageGameOver messageGameOver;
     private ButtonNewGame buttonNewGame;
@@ -68,10 +69,13 @@ public class GameScreen extends Base2DScreen {
     private StringBuilder sbFrags;
     private StringBuilder sbHp;
     private StringBuilder sbLevel;
+    private ShapeRenderer lifeLine;
 
     @Override
     public void show() {
         super.show();
+        lifeLine = new ShapeRenderer();
+
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
         music.setLooping(true);
         music.play();
@@ -103,14 +107,14 @@ public class GameScreen extends Base2DScreen {
     @Override
     public void pause() {
         super.pause();
-        stattBuf = state;
+        stateBuf = state;
         state = State.PAUSE;
     }
 
     @Override
     public void resume() {
         super.resume();
-        state = stattBuf;
+        state = stateBuf;
     }
 
     @Override
@@ -211,8 +215,6 @@ public class GameScreen extends Base2DScreen {
     }
 
     private void draw() {
-        Gdx.gl.glClearColor(0.51f, 0.34f, 0.64f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
         for (Star star : starList) {
@@ -229,15 +231,27 @@ public class GameScreen extends Base2DScreen {
         }
         printInfo();
         batch.end();
+
+        lifeLine.begin(ShapeRenderer.ShapeType.Line);
+        if (mainShip.getHp() > 75)
+            lifeLine.setColor(Color.GREEN);
+        else if (mainShip.getHp() > 50)
+            lifeLine.setColor(Color.ORANGE);
+        else if (mainShip.getHp() > 33)
+            lifeLine.setColor(Color.YELLOW);
+        else
+            lifeLine.setColor(Color.RED);
+        lifeLine.line(0, Gdx.graphics.getHeight()-1, (int) (Gdx.graphics.getWidth()*(mainShip.getHp()/(float)100)), Gdx.graphics.getHeight()-1);
+        lifeLine.end();
     }
 
     public void printInfo() {
         sbFrags.setLength(0);
         sbHp.setLength(0);
         sbLevel.setLength(0);
-        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop());
-        font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop(), Align.center);
-        font.draw(batch, sbLevel.append(LEVEL).append(enemiesEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop(), Align.right);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop()-0.003f);
+        font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop()-0.003f, Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemiesEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop()-0.003f, Align.right);
     }
 
     @Override
@@ -252,6 +266,7 @@ public class GameScreen extends Base2DScreen {
         bulletPool.dispose();
         enemyPool.dispose();
         font.dispose();
+        lifeLine.dispose();
         super.dispose();
     }
 

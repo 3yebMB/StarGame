@@ -73,7 +73,7 @@ public class EnemiesEmitter {
             if (type < 0.5f) {
                 enemy.set(
                         enemySmallRegion,
-                        enemySmallV,
+                        enemySmallV.add(0, -level*0.005f),
                         bulletRegion,
                         ENEMY_SMALL_BULLET_HEIGHT,
                         ENEMY_SMALL_BULLET_VY,
@@ -85,7 +85,7 @@ public class EnemiesEmitter {
             } else if (type < 0.8f) {
                 enemy.set(
                         enemyMediumRegion,
-                        enemyMediumV,
+                        enemyMediumV.add(0, -level*0.005f),
                         bulletRegion,
                         ENEMY_MEDIUM_BULLET_HEIGHT,
                         ENEMY_MEDIUM_BULLET_VY,
@@ -97,7 +97,7 @@ public class EnemiesEmitter {
             } else {
                 enemy.set(
                         enemyBigRegion,
-                        enemyBigV,
+                        enemyBigV.add(0, -level*0.005f),
                         bulletRegion,
                         ENEMY_BIG_BULLET_HEIGHT,
                         ENEMY_BIG_BULLET_VY,

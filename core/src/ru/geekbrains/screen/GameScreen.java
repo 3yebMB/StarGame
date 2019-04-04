@@ -241,7 +241,7 @@ public class GameScreen extends Base2DScreen {
             lifeLine.setColor(Color.YELLOW);
         else
             lifeLine.setColor(Color.RED);
-        lifeLine.line(0, Gdx.graphics.getHeight()-1, (int) (Gdx.graphics.getWidth()*(mainShip.getHp()/(float)100)), Gdx.graphics.getHeight()-1);
+        lifeLine.line(0, Gdx.graphics.getHeight()-1, (int)(Gdx.graphics.getWidth()*(mainShip.getHp()/(float)100)), Gdx.graphics.getHeight()-1);
         lifeLine.end();
     }
 
@@ -250,7 +250,10 @@ public class GameScreen extends Base2DScreen {
         sbHp.setLength(0);
         sbLevel.setLength(0);
         font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop()-0.003f);
-        font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop()-0.003f, Align.center);
+        if (mainShip.getHp()>=0)
+            font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop()-0.003f, Align.center);
+        else
+            font.draw(batch, sbHp.append(HP).append(0), worldBounds.pos.x, worldBounds.getTop()-0.003f, Align.center);
         font.draw(batch, sbLevel.append(LEVEL).append(enemiesEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop()-0.003f, Align.right);
     }
 

@@ -1,6 +1,7 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -70,6 +71,10 @@ public class GameScreen extends Base2DScreen {
     private StringBuilder sbHp;
     private StringBuilder sbLevel;
     private ShapeRenderer lifeLine;
+
+    boolean vibro = Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator);
+    boolean accel = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
+    boolean gyros = Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
 
     @Override
     public void show() {
@@ -163,6 +168,7 @@ public class GameScreen extends Base2DScreen {
 
             if (enemy.getBottom() <= mainShip.getBottom()+mainShip.getBottom()/10) {
                 mainShip.damage(enemy.getHp() / 10.0f);
+                if (vibro) Gdx.input.vibrate(100);
             }
 
             float minDist = enemy.getHalfWidth() + mainShip.getHalfWidth();
@@ -170,6 +176,7 @@ public class GameScreen extends Base2DScreen {
                 enemy.damage(enemy.getHp());
                 mainShip.damage(mainShip.getHp());
                 state = State.GAME_OVER;
+                if (vibro) Gdx.input.vibrate(500);
                 return;
             }
         }
@@ -200,9 +207,11 @@ public class GameScreen extends Base2DScreen {
             }
             if (mainShip.isBulletCollision(bullet)) {
                 mainShip.damage(bullet.getDamage());
+                if (vibro) Gdx.input.vibrate(250);
                 bullet.destroy();
                 if (mainShip.isDestroyed()) {
                     state = State.GAME_OVER;
+                    if (vibro) Gdx.input.vibrate(500);
                 }
             }
         }

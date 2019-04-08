@@ -12,7 +12,7 @@ import ru.geekbrains.pool.ExplosionPool;
 public class MainShip extends Ship {
 
     private static final int INVALID_POINTER = -1;
-    private static final int HP = 100;
+    protected static final int HP = 100;
 
     private Vector2 v0 = new Vector2(0.5f, 0);
 

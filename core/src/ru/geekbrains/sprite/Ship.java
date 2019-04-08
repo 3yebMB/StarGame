@@ -52,7 +52,7 @@ public class Ship extends Sprite {
         }
     }
 
-    public void damage(int damage) {
+    public void damage(float damage) {
         frame = 1;
         damageAnimateTimer = 0f;
         hp -= damage;
@@ -82,7 +82,18 @@ public class Ship extends Sprite {
         return hp;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
     public Vector2 getV() {
         return v;
+    }
+
+    public void setHp(int ehp) {
+        if ((MainShip.HP - hp) > ehp)
+            this.hp += ehp;
+        else
+            this.hp = MainShip.HP;
     }
 }

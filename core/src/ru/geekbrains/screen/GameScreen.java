@@ -1,12 +1,15 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 
@@ -32,9 +35,10 @@ public class GameScreen extends Base2DScreen {
 
     private static final int STAR_COUNT = 64;
     private static final float FONT_SIZE = 0.02f;
-    private static final String FRAGS = "Frags: ";
+    private static final String HIGHSCORE = "HS: ";
+    private static final String FRAGS = "S: ";
     private static final String HP = "HP: ";
-    private static final String LEVEL = "Level: ";
+    private static final String LEVEL = "L: ";
 
     private enum State {PLAYING, PAUSE, GAME_OVER}
 
@@ -57,9 +61,10 @@ public class GameScreen extends Base2DScreen {
     private Sound explosionSound;
 
     private int frags;
+    public static int highScore;
 
     private State state;
-    private State stattBuf;
+    private State stateBuf;
 
     private MessageGameOver messageGameOver;
     private ButtonNewGame buttonNewGame;
@@ -68,10 +73,22 @@ public class GameScreen extends Base2DScreen {
     private StringBuilder sbFrags;
     private StringBuilder sbHp;
     private StringBuilder sbLevel;
+    private StringBuilder sbScore;
+    private ShapeRenderer lifeLine;
+
+    boolean vibro = Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator);
+    boolean accel = Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
+    boolean gyros = Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
+
+    static Preferences pref;
 
     @Override
     public void show() {
         super.show();
+        pref = Gdx.app.getPreferences("My Preferences");
+        highScore = pref.getInteger("highscore");
+        lifeLine = new ShapeRenderer();
+
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
         music.setLooping(true);
         music.play();
@@ -92,6 +109,7 @@ public class GameScreen extends Base2DScreen {
         font = new Font("font/font.fnt", "font/font.png");
         font.setSize(FONT_SIZE);
         sbFrags = new StringBuilder();
+        sbScore = new StringBuilder();
         sbHp = new StringBuilder();
         sbLevel = new StringBuilder();
         for (int i = 0; i < starList.length; i++) {
@@ -103,14 +121,14 @@ public class GameScreen extends Base2DScreen {
     @Override
     public void pause() {
         super.pause();
-        stattBuf = state;
+        stateBuf = state;
         state = State.PAUSE;
     }
 
     @Override
     public void resume() {
         super.resume();
-        state = stattBuf;
+        state = stateBuf;
     }
 
     @Override
@@ -156,11 +174,18 @@ public class GameScreen extends Base2DScreen {
             if (enemy.isDestroyed()) {
                 continue;
             }
+
+            if (enemy.getBottom() <= mainShip.getBottom()+mainShip.getBottom()/10) {
+                mainShip.damage(enemy.getHp() / 10.0f);
+                if (vibro) Gdx.input.vibrate(100);
+            }
+
             float minDist = enemy.getHalfWidth() + mainShip.getHalfWidth();
             if (enemy.pos.dst(mainShip.pos) < minDist) {
                 enemy.damage(enemy.getHp());
                 mainShip.damage(mainShip.getHp());
                 state = State.GAME_OVER;
+                if (vibro) Gdx.input.vibrate(500);
                 return;
             }
         }
@@ -178,7 +203,11 @@ public class GameScreen extends Base2DScreen {
                     enemy.damage(bullet.getDamage());
                     bullet.destroy();
                     if (enemy.isDestroyed()) {
+                        mainShip.setHp(enemy.getDamage()/2);
                         frags++;
+                        if(frags>highScore) {
+                            highScore = frags;
+                        }
                     }
                 }
             }
@@ -190,9 +219,11 @@ public class GameScreen extends Base2DScreen {
             }
             if (mainShip.isBulletCollision(bullet)) {
                 mainShip.damage(bullet.getDamage());
+                if (vibro) Gdx.input.vibrate(250);
                 bullet.destroy();
                 if (mainShip.isDestroyed()) {
                     state = State.GAME_OVER;
+                    if (vibro) Gdx.input.vibrate(500);
                 }
             }
         }
@@ -205,8 +236,6 @@ public class GameScreen extends Base2DScreen {
     }
 
     private void draw() {
-        Gdx.gl.glClearColor(0.51f, 0.34f, 0.64f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
         for (Star star : starList) {
@@ -223,19 +252,39 @@ public class GameScreen extends Base2DScreen {
         }
         printInfo();
         batch.end();
+
+        lifeLine.begin(ShapeRenderer.ShapeType.Line);
+        if (mainShip.getHp() > 75)
+            lifeLine.setColor(Color.GREEN);
+        else if (mainShip.getHp() > 50)
+            lifeLine.setColor(Color.ORANGE);
+        else if (mainShip.getHp() > 33)
+            lifeLine.setColor(Color.YELLOW);
+        else
+            lifeLine.setColor(Color.RED);
+        lifeLine.line(0, Gdx.graphics.getHeight()-1, (int)(Gdx.graphics.getWidth()*(mainShip.getHp()/(float)100)), Gdx.graphics.getHeight()-1);
+        lifeLine.end();
     }
 
     public void printInfo() {
         sbFrags.setLength(0);
         sbHp.setLength(0);
         sbLevel.setLength(0);
-        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop());
-        font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop(), Align.center);
-        font.draw(batch, sbLevel.append(LEVEL).append(enemiesEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop(), Align.right);
+        sbScore.setLength(0);
+
+        font.draw(batch, sbScore.append(HIGHSCORE).append(highScore), worldBounds.getLeft(), worldBounds.getTop()-0.003f);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.pos.x-0.1f, worldBounds.getTop()-0.003f, Align.center);
+        if (mainShip.getHp()>=0)
+            font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x+0.1f, worldBounds.getTop()-0.003f, Align.center);
+        else
+            font.draw(batch, sbHp.append(HP).append(0), worldBounds.pos.x+0.1f, worldBounds.getTop()-0.03f, Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemiesEmitter.getLevel()), worldBounds.getRight(), worldBounds.getTop()-0.003f, Align.right);
     }
 
     @Override
     public void dispose() {
+        pref.putInteger("highscore", highScore);
+        pref.flush();
         backgroundTexture.dispose();
         atlas.dispose();
         music.dispose();
@@ -246,6 +295,7 @@ public class GameScreen extends Base2DScreen {
         bulletPool.dispose();
         enemyPool.dispose();
         font.dispose();
+        lifeLine.dispose();
         super.dispose();
     }
 
